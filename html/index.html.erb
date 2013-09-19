@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>WebMPC</title>
+    <style><%= Sass.compile_file(File.expand_path('../webmpc.scss', __FILE__), style: :compressed) %></style>
+  </head>
+  <body>
+    <div id="player">
+      <div id="ctrl">
+        <div class="wrap">
+          <div id="prev" title="Previous"></div>
+          <div id="pause" title="Play / Pause"></div>
+          <div id="next" title="Next"></div>
+          <div id="repeat" title="Repeat"></div>
+          <div id="random" title="Random"></div>
+        </div>
+      </div>
+
+      <div id="status">
+        <div id="current-track"></div>
+
+        <div class="prog">
+          <span id="progress-val"></span>
+          <input id="progress" type="range" min="0" value="0">
+          <span id="progress-remain"></span>
+        </div>
+      </div>
+
+      <div id="vol">
+        <input id="volume" type="range" min="0" max="100" value="100">
+      </div>
+    </div>
+
+    <div id="db">
+      <div class="head">
+        <span>Database</span>
+      </div>
+      <div class="wrap"></div>
+    </div>
+
+    <div id="playlist">
+      <div class="head">
+        <span>Playlist</span>
+        <span class="clear" title="Clear"></span>
+      </div>
+      <div class="wrap"></div>
+    </div>
+
+    <script><%= Uglifier.compile(CoffeeScript.compile(File.read(File.expand_path('../webmpc.coffee', __FILE__)))) %></script>
+  </body>
+</html>

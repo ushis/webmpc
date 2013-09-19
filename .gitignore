@@ -1,0 +1,9 @@
+# Vim
+*.swo
+*.swp
+
+# Binaries
+/webmpcd
+*.6
+/index.html
+.sass-cache
