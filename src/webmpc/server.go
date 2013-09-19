@@ -156,5 +156,8 @@ func (s *Server) shutdown() {
   close(s.stop)
   close(s.Log)
   close(s.drop)
-  s.mpd.Close()
+
+  if s.mpd != nil {
+    s.mpd.Close()
+  }
 }

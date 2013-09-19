@@ -13,12 +13,14 @@ import (
 
 var (
   addr      string
+  index     string
   mpdAddr   string
   mpdPasswd string
 )
 
 func init() {
-  flag.StringVar(&addr, "listen", ":8080", "addrwaa or socket to listen to")
+  flag.StringVar(&addr, "listen", ":8080", "address or socket to listen to")
+  flag.StringVar(&index, "index", "./index.html", "path to index.html")
   flag.StringVar(&mpdAddr, "addr", "127.0.0.1:6600", "address of the mpd server")
   flag.StringVar(&mpdPasswd, "passwd", "", "mpd password")
 }
@@ -52,7 +54,7 @@ func main() {
 }
 
 func serveIndex(w http.ResponseWriter, r *http.Request) {
-  http.ServeFile(w, r, "index.html")
+  http.ServeFile(w, r, index)
 }
 
 func listen(addr string) (net.Listener, error) {
