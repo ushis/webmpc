@@ -9,6 +9,7 @@ license=('MIT')
 conflicts=('webmpc')
 provides=('webmpc')
 makedepends=('go' 'ruby')
+options=(!strip)
 source=('webmpc::git+https://github.com/ushis/webmpc#branch=master')
 sha256sums=('SKIP')
 
