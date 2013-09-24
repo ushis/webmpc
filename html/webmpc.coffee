@@ -28,6 +28,20 @@ Util =
     e.preventDefault()
     e.stopPropagation()
 
+  # Stores an item.
+  setItem: (key, value) ->
+    try
+      window.localStorage.setItem(key, JSON.stringify(value))
+    catch e
+      console.log('Util.setItem:', e)
+
+  # Gets an item.
+  getItem: (key, fallback = null) ->
+    try
+      JSON.parse(window.localStorage.getItem(key)) || fallback
+    catch e
+      console.log(e)
+      fallback
 
 # Simple context menu.
 ContextMenu =
@@ -145,9 +159,9 @@ class Db
     @socket.register 'Files', (files) => @update(files)
 
     # Toggle folders on click.
-    @el.addEventListener 'click', (e) ->
+    @el.addEventListener 'click', (e) =>
       if e.target.nodeName is 'SPAN' and e.target.parentNode.dataset.type is 'dir'
-        e.target.parentNode.classList.toggle('active')
+        @handleClick(e, e.target.parentNode)
 
     # Play files on double click.
     @el.addEventListener 'dblclick', (e) =>
@@ -168,6 +182,7 @@ class Db
 
   # Populates the database. We are building a nested list here.
   update: (files) ->
+    active = Util.getItem('db.active', {})
     root = Util.mk('ul')
 
     for f in files
@@ -185,6 +200,7 @@ class Db
         li = Util.mk('li')
         li.dataset.name = name
         li.dataset.type = 'dir'
+        li.classList.add('active') if active[name]
         li.appendChild(Util.mk('span', textContent: dir, draggable: true))
         ul = Util.mk('ul')
         li.appendChild(ul)
@@ -204,6 +220,13 @@ class Db
   getUris: (li) ->
     return [li.dataset.name] if li.dataset.type is 'file'
     (l.dataset.name for l in li.querySelectorAll('li[data-type="file"]'))
+
+  #
+  handleClick: (e, li) ->
+    li.classList.toggle('active')
+    active = {}
+    active[el.dataset.name] = true for el in @el.querySelectorAll('li.active')
+    Util.setItem('db.active', active)
 
   # Populates the transfer data with the uris inside the dragged folder/file.
   handleDragStart: (e, li) ->
