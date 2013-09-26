@@ -14,14 +14,11 @@ and broadcasts the results to all connected clients.
 ## Get it
 
 To compile the server you need a [Go](http://golang.org/) compiler and a
-[Ruby](https://www.ruby-lang.org) interpreter to compile the client. The
-Makefile uses [godag](https://code.google.com/p/godag/) as compiler front-end.
+[Ruby](https://www.ruby-lang.org) interpreter to compile the client.
 
 Get the dependencies.
 
 ```
-go get github.com/fhs/gompd/mpd
-go get code.google.com/p/net.go/websocket
 gem install coffee-script uglifier sass
 ```
 

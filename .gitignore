@@ -2,6 +2,10 @@
 *.swo
 *.swp
 
+# Deps
+src/github.com
+src/code.google.com
+
 # Binaries
 /webmpcd
 *.6
