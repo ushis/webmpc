@@ -382,7 +382,10 @@ class Player
 
     # Toggle pause/play.
     @el.querySelector('#pause').addEventListener 'click', =>
-      socket.send(Cmd: 'Pause', Pause: (@el.dataset.state is 'play'))
+      if @el.dataset.state is 'stop'
+        socket.send(Cmd: 'Play', Pos: -1)
+      else
+        socket.send(Cmd: 'Pause', Pause: (@el.dataset.state is 'play'))
 
     # Toggle random playback.
     @el.querySelector('#random').addEventListener 'click', =>

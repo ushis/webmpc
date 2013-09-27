@@ -29,7 +29,7 @@ func main() {
   flag.Parse()
 
   s := webmpc.New(mpdAddr, mpdPasswd)
-  defer s.Stop()
+  defer s.Close()
 
   l, err := listen(addr)
 
@@ -45,7 +45,6 @@ func main() {
   mux.Handle("/ws", s.Handler())
 
   go log(s.Log)
-  go s.Run()
   go http.Serve(l, mux)
 
   sig := make(chan os.Signal)

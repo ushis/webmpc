@@ -82,18 +82,14 @@ func (c *Cmd) Exec(conn *mpd.Client) (*Result, error) {
 
 //
 func add(cmd *Cmd, conn *mpd.Client) (*Result, error) {
-  if err := conn.Add(cmd.Uri); err != nil {
-    return nil, err
-  }
-  return playlistInfo(cmd, conn)
+  err := conn.Add(cmd.Uri)
+  return nil, err
 }
 
 //
 func addId(cmd *Cmd, conn *mpd.Client) (*Result, error) {
-  if _, err := conn.AddId(cmd.Uri, cmd.Pos); err != nil {
-    return nil, err
-  }
-  return playlistInfo(cmd, conn)
+  _, err := conn.AddId(cmd.Uri, cmd.Pos)
+  return nil, err
 }
 
 //
@@ -107,19 +103,13 @@ func addMulti(cmd *Cmd, conn *mpd.Client) (*Result, error) {
       list.AddId(uri, cmd.Pos+i)
     }
   }
-
-  if err := list.End(); err != nil {
-    return nil, err
-  }
-  return playlistInfo(cmd, conn)
+  return nil, list.End()
 }
 
 //
 func clear(cmd *Cmd, conn *mpd.Client) (*Result, error) {
-  if err := conn.Clear(); err != nil {
-    return nil, err
-  }
-  return playlistInfo(cmd, conn)
+  err := conn.Clear()
+  return nil, err
 }
 
 //
@@ -134,18 +124,14 @@ func currentSong(_ *Cmd, conn *mpd.Client) (r *Result, err error) {
 
 //
 func del(cmd *Cmd, conn *mpd.Client) (*Result, error) {
-  if err := conn.Delete(cmd.Start, cmd.End); err != nil {
-    return nil, err
-  }
-  return playlistInfo(cmd, conn)
+  err := conn.Delete(cmd.Start, cmd.End)
+  return nil, err
 }
 
 //
 func delId(cmd *Cmd, conn *mpd.Client) (*Result, error) {
-  if err := conn.DeleteId(cmd.Id); err != nil {
-    return nil, err
-  }
-  return playlistInfo(cmd, conn)
+  err := conn.DeleteId(cmd.Id)
+  return nil, err
 }
 
 //
@@ -160,42 +146,32 @@ func getFiles(_ *Cmd, conn *mpd.Client) (r *Result, err error) {
 
 //
 func moveId(cmd *Cmd, conn *mpd.Client) (*Result, error) {
-  if err := conn.MoveId(cmd.Id, cmd.Pos); err != nil {
-    return nil, err
-  }
-  return playlistInfo(cmd, conn)
+  err := conn.MoveId(cmd.Id, cmd.Pos)
+  return nil, err
 }
 
 //
 func next(cmd *Cmd, conn *mpd.Client) (*Result, error) {
-  if err := conn.Next(); err != nil {
-    return nil, err
-  }
-  return currentSong(cmd, conn)
+  err := conn.Next()
+  return nil, err
 }
 
 //
 func pause(cmd *Cmd, conn *mpd.Client) (*Result, error) {
-  if err := conn.Pause(cmd.Pause); err != nil {
-    return nil, err
-  }
-  return status(cmd, conn)
+  err := conn.Pause(cmd.Pause)
+  return nil, err
 }
 
 //
 func play(cmd *Cmd, conn *mpd.Client) (*Result, error) {
-  if err := conn.Play(cmd.Pos); err != nil {
-    return nil, err
-  }
-  return currentSong(cmd, conn)
+  err := conn.Play(cmd.Pos)
+  return nil, err
 }
 
 //
 func playId(cmd *Cmd, conn *mpd.Client) (*Result, error) {
-  if err := conn.PlayId(cmd.Id); err != nil {
-    return nil, err
-  }
-  return currentSong(cmd, conn)
+  err := conn.PlayId(cmd.Id)
+  return nil, err
 }
 
 //
@@ -210,42 +186,32 @@ func playlistInfo(_ *Cmd, conn *mpd.Client) (r *Result, err error) {
 
 //
 func previous(cmd *Cmd, conn *mpd.Client) (*Result, error) {
-  if err := conn.Previous(); err != nil {
-    return nil, err
-  }
-  return currentSong(cmd, conn)
+  err := conn.Previous()
+  return nil, err
 }
 
 //
 func random(cmd *Cmd, conn *mpd.Client) (*Result, error) {
-  if err := conn.Random(cmd.Random); err != nil {
-    return nil, err
-  }
-  return status(cmd, conn)
+  err := conn.Random(cmd.Random)
+  return nil, err
 }
 
 //
 func repeat(cmd *Cmd, conn *mpd.Client) (*Result, error) {
-  if err := conn.Repeat(cmd.Repeat); err != nil {
-    return nil, err
-  }
-  return status(cmd, conn)
+  err := conn.Repeat(cmd.Repeat)
+  return nil, err
 }
 
 //
 func seek(cmd *Cmd, conn *mpd.Client) (*Result, error) {
-  if err := conn.Seek(cmd.Pos, cmd.Time); err != nil {
-    return nil, err
-  }
-  return currentSong(cmd, conn)
+  err := conn.Seek(cmd.Pos, cmd.Time)
+  return nil, err
 }
 
 //
 func seekId(cmd *Cmd, conn *mpd.Client) (*Result, error) {
-  if err := conn.SeekId(cmd.Id, cmd.Time); err != nil {
-    return nil, err
-  }
-  return currentSong(cmd, conn)
+  err := conn.SeekId(cmd.Id, cmd.Time)
+  return nil, err
 }
 
 //
@@ -258,18 +224,13 @@ func setPlaylist(cmd *Cmd, conn *mpd.Client) (*Result, error) {
   }
   list.Play(0)
 
-  if err := list.End(); err != nil {
-    return nil, err
-  }
-  return playlistInfo(cmd, conn)
+  return nil, list.End()
 }
 
 //
 func setVolume(cmd *Cmd, conn *mpd.Client) (*Result, error) {
-  if err := conn.SetVolume(cmd.Volume); err != nil {
-    return nil, err
-  }
-  return status(cmd, conn)
+  err := conn.SetVolume(cmd.Volume)
+  return nil, err
 }
 
 //
@@ -284,8 +245,6 @@ func status(cmd *Cmd, conn *mpd.Client) (r *Result, err error) {
 
 //
 func stop(cmd *Cmd, conn *mpd.Client) (*Result, error) {
-  if err := conn.Stop(); err != nil {
-    return nil, err
-  }
-  return status(cmd, conn)
+  err := conn.Stop()
+  return nil, err
 }
