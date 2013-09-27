@@ -33,6 +33,7 @@ input[type=range] {
     height: 10px;
     border-radius: 5px;
     background-color: #fff;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.6);
     cursor: move;
   }
 }
@@ -180,11 +181,12 @@ input[type=range] {
     margin: 0 auto;
     text-align: center;
 
-    div{
+    div {
       line-height: 20px;
 
       &#current-track {
         padding-top: 10px;
+        min-height: 20px;
         white-space: nowrap;
 
         span:nth-child(n+2):before {

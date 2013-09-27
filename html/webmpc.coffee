@@ -425,7 +425,7 @@ class Player
 
   # Updates the current track title.
   updateCurrent: (track) ->
-    track.Title ||= track.file.split('/').pop()
+    track.Title ||= track.file?.split('/').pop()
     title = (track[k] for k in ['Title', 'Album', 'Artist'] when track[k])
     document.title = title.join(' - ')
     @curTrack.innerHTML = ''
