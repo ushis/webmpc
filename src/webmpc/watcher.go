@@ -83,6 +83,8 @@ func (w *Watcher) handleEvent(subsystem string) {
     cmd.Cmd = "Status"
   case "playlist":
     cmd.Cmd = "PlaylistInfo"
+  case "stored_playlist":
+    cmd.Cmd = "ListPlaylists"
   case "database":
     cmd.Cmd = "GetFiles"
   default:

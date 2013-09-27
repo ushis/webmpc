@@ -7,29 +7,40 @@ import (
 
 // Map of mpd commands.
 var commands = map[string]func(*Cmd, *mpd.Client) (*Result, error){
-  "Add":          add,
-  "AddId":        addId,
-  "AddMulti":     addMulti,
-  "Clear":        clear,
-  "CurrentSong":  currentSong,
-  "Delete":       del,
-  "DeleteId":     delId,
-  "GetFiles":     getFiles,
-  "MoveId":       moveId,
-  "Next":         next,
-  "Pause":        pause,
-  "Play":         play,
-  "PlayId":       playId,
-  "PlaylistInfo": playlistInfo,
-  "Previous":     previous,
-  "Random":       random,
-  "Repeat":       repeat,
-  "Seek":         seek,
-  "SeekId":       seekId,
-  "SetPlaylist":  setPlaylist,
-  "SetVolume":    setVolume,
-  "Status":       status,
-  "Stop":         stop,
+  "Add":              add,
+  "AddId":            addId,
+  "AddMulti":         addMulti,
+  "Clear":            clear,
+  "CurrentSong":      currentSong,
+  "Delete":           del,
+  "DeleteId":         delId,
+  "GetFiles":         getFiles,
+  "ListPlaylists":    listPlaylists,
+  "MoveId":           moveId,
+  "Next":             next,
+  "Pause":            pause,
+  "Play":             play,
+  "PlayId":           playId,
+  "PlaylistAdd":      playlistAdd,
+  "PlaylistClear":    playlistClear,
+  "PlaylistContents": playlistContents,
+  "PlaylistDelete":   playlistDelete,
+  "PlaylistInfo":     playlistInfo,
+  "PlaylistLoad":     playlistLoad,
+  "PlaylistMove":     playlistMove,
+  "PlaylistRemove":   playlistRemove,
+  "PlaylistRename":   playlistRename,
+  "PlaylistSave":     playlistSave,
+  "Previous":         previous,
+  "Random":           random,
+  "Repeat":           repeat,
+  "Seek":             seek,
+  "SeekId":           seekId,
+  "SetPlaylist":      setPlaylist,
+  "SetVolume":        setVolume,
+  "Status":           status,
+  "Stop":             stop,
+  "Update":           update,
 }
 
 // Pool of free Cmd structs.
@@ -37,18 +48,20 @@ var cmdPool = make(chan *Cmd, 100)
 
 // A Cmd is combination of a command and different arguments.
 type Cmd struct {
-  Cmd    string
-  Uri    string
-  Uris   []string
-  Id     int
-  Pause  bool
-  Pos    int
-  Random bool
-  Repeat bool
-  Start  int
-  End    int
-  Time   int
-  Volume int
+  Cmd      string
+  Uri      string
+  Uris     []string
+  Id       int
+  Name     string
+  Pause    bool
+  Playlist string
+  Pos      int
+  Random   bool
+  Repeat   bool
+  Start    int
+  End      int
+  Time     int
+  Volume   int
 }
 
 // Returns a new command.
@@ -145,6 +158,16 @@ func getFiles(_ *Cmd, conn *mpd.Client) (r *Result, err error) {
 }
 
 //
+func listPlaylists(_ *Cmd, conn *mpd.Client) (r *Result, err error) {
+  lists, err := conn.ListPlaylists()
+
+  if err == nil {
+    r = NewResult("StoredPlaylists", lists)
+  }
+  return
+}
+
+//
 func moveId(cmd *Cmd, conn *mpd.Client) (*Result, error) {
   err := conn.MoveId(cmd.Id, cmd.Pos)
   return nil, err
@@ -175,6 +198,40 @@ func playId(cmd *Cmd, conn *mpd.Client) (*Result, error) {
 }
 
 //
+func playlistAdd(cmd *Cmd, conn *mpd.Client) (*Result, error) {
+  if err := conn.PlaylistAdd(cmd.Playlist, cmd.Uri); err != nil {
+    return nil, err
+  }
+  return playlistContents(cmd, conn)
+}
+
+//
+func playlistClear(cmd *Cmd, conn *mpd.Client) (*Result, error) {
+  if err := conn.PlaylistClear(cmd.Playlist); err != nil {
+    return nil, err
+  }
+  return playlistContents(cmd, conn)
+}
+
+//
+func playlistContents(cmd *Cmd, conn *mpd.Client) (r *Result, err error) {
+  pl, err := conn.PlaylistContents(cmd.Playlist)
+
+  if err == nil {
+    r = NewResult("StoredPlaylist", NewStoredPlaylist(cmd.Playlist, pl))
+  }
+  return
+}
+
+//
+func playlistDelete(cmd *Cmd, conn *mpd.Client) (*Result, error) {
+  if err := conn.PlaylistDelete(cmd.Playlist, cmd.Pos); err != nil {
+    return nil, err
+  }
+  return playlistContents(cmd, conn)
+}
+
+//
 func playlistInfo(_ *Cmd, conn *mpd.Client) (r *Result, err error) {
   pl, err := conn.PlaylistInfo(-1, -1)
 
@@ -182,6 +239,38 @@ func playlistInfo(_ *Cmd, conn *mpd.Client) (r *Result, err error) {
     r = NewResult("Playlist", pl)
   }
   return
+}
+
+//
+func playlistLoad(cmd *Cmd, conn *mpd.Client) (*Result, error) {
+  err := conn.PlaylistLoad(cmd.Playlist, cmd.Start, cmd.End)
+  return nil, err
+}
+
+//
+func playlistMove(cmd *Cmd, conn *mpd.Client) (*Result, error) {
+  if err := conn.PlaylistMove(cmd.Playlist, cmd.Id, cmd.Pos); err != nil {
+    return nil, err
+  }
+  return playlistContents(cmd, conn)
+}
+
+//
+func playlistRemove(cmd *Cmd, conn *mpd.Client) (*Result, error) {
+  err := conn.PlaylistRemove(cmd.Playlist)
+  return nil, err
+}
+
+//
+func playlistRename(cmd *Cmd, conn *mpd.Client) (*Result, error) {
+  err := conn.PlaylistRename(cmd.Playlist, cmd.Name)
+  return nil, err
+}
+
+//
+func playlistSave(cmd *Cmd, conn *mpd.Client) (*Result, error) {
+  err := conn.PlaylistSave(cmd.Playlist)
+  return nil, err
 }
 
 //
@@ -246,5 +335,11 @@ func status(cmd *Cmd, conn *mpd.Client) (r *Result, err error) {
 //
 func stop(cmd *Cmd, conn *mpd.Client) (*Result, error) {
   err := conn.Stop()
+  return nil, err
+}
+
+//
+func update(cmd *Cmd, conn *mpd.Client) (*Result, error) {
+  _, err := conn.Update("")
   return nil, err
 }
