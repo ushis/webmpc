@@ -26,6 +26,7 @@ input[type=range] {
   background-color: #fff;
   height: 4px;
   border-radius: 2px;
+  outline: none;
 
   &::-webkit-slider-thumb {
     -webkit-appearance: none;
