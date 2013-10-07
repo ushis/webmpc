@@ -38,13 +38,13 @@ func main() {
   }
   defer l.Close()
 
-  fmt.Fprintf(os.Stderr, "Listening on: %s\n", addr)
+  log("Listening on:", addr)
 
   mux := http.NewServeMux()
   mux.HandleFunc("/", serveIndex)
   mux.Handle("/ws", s.Handler())
 
-  go log(s.Log)
+  go chnLog(s.Log)
   go http.Serve(l, mux)
 
   sig := make(chan os.Signal)
@@ -63,13 +63,17 @@ func listen(addr string) (net.Listener, error) {
   return net.Listen("tcp", addr)
 }
 
-func log(chn <-chan interface{}) {
+func log(msg ...interface{}) {
+  fmt.Fprintln(os.Stderr, msg...)
+}
+
+func chnLog(chn <-chan interface{}) {
   for msg := range chn {
-    fmt.Fprintln(os.Stderr, msg)
+    log(msg)
   }
 }
 
 func die(msg ...interface{}) {
-  fmt.Fprintln(os.Stderr, msg...)
+  log(msg...)
   os.Exit(1)
 }
