@@ -309,6 +309,10 @@ input[type=range] {
 #playlist {
   left: 50%;
 
+  div.wrap {
+    padding-bottom: 24px;
+  }
+
   table {
     width: 100%;
     border-spacing: 0;
