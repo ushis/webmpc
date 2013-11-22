@@ -359,6 +359,7 @@ class Player
     @progVal = @el.querySelector('#progress-val')
     @progRem = @el.querySelector('#progress-remain')
     @curTrack = @el.querySelector('#current-track')
+    @icon = Util.mk('link', rel: 'icon', type: 'image/png')
     @curId = -1
     statusTimeout = null
 
@@ -413,6 +414,14 @@ class Player
     @el.dataset.repeat = status.repeat
     @vol.value = status.volume
     @curId = status.songid
+
+    if status.state is 'play'
+      @icon.href = '<%= "data:image/png;base64,#{Base64.encode64(File.read(File.expand_path('../play.png', __FILE__)))}" %>'
+    else
+      @icon.href = '<%= "data:image/png;base64,#{Base64.encode64(File.read(File.expand_path('../pause.png', __FILE__)))}" %>'
+
+    try document.head.removeChild(@icon)
+    document.head.appendChild(@icon)
 
     if status.time?
       @updateProg.apply(@, status.time.split(':').map (i) -> window.parseInt(i))

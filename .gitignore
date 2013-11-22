@@ -10,4 +10,6 @@ src/code.google.com
 /webmpcd
 *.6
 /index.html
-.sass-cache
+/html/webmpc.js
+/html/webmpc.css
+/.sass-cache
