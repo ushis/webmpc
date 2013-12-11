@@ -21,12 +21,21 @@ ul {
   list-style-type: none;
 }
 
+// Webkit and Firefox sliders
 input[type=range] {
   -webkit-appearance: none;
   background-color: #fff;
   height: 4px;
   border-radius: 2px;
   outline: none;
+
+  &::-moz-range-track {
+    background-color: #fff;
+    height: 4px;
+    border-radius: 2px;
+    outline: none;
+    border: 0 none transparent;
+  }
 
   &::-webkit-slider-thumb {
     -webkit-appearance: none;
@@ -37,8 +46,20 @@ input[type=range] {
     box-shadow: 0 0 2px rgba(0, 0, 0, 0.6);
     cursor: move;
   }
+
+  &::-moz-range-thumb {
+    -moz-appearance: none;
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    background-color: #fff;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.6);
+    border: 0 none transparent;
+    cursor: move;
+  }
 }
 
+// Scrollbars
 ::-webkit-scrollbar {
   width: 4px;
   height: 4px;
