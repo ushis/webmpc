@@ -6,7 +6,7 @@ After=network.target
 Type=simple
 User=http
 Group=http
-ExecStart=/usr/bin/webmpcd -listen=/run/webmpc/webmpcd.sock -index=/usr/share/webmpc/index.html
+ExecStart=/usr/bin/webmpcd -listen=/run/webmpc/webmpcd.sock -root=/usr/share/webmpc
 KillSignal=SIGINT
 
 [Install]

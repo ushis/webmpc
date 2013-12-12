@@ -7,20 +7,21 @@ import (
   "net/http"
   "os"
   "os/signal"
+  "path/filepath"
   "syscall"
   "webmpc"
 )
 
 var (
   addr      string
-  index     string
+  root      string
   mpdAddr   string
   mpdPasswd string
 )
 
 func init() {
   flag.StringVar(&addr, "listen", ":8080", "address or socket to listen to")
-  flag.StringVar(&index, "index", "./index.html", "path to index.html")
+  flag.StringVar(&root, "root", "./html", "http root directory")
   flag.StringVar(&mpdAddr, "addr", "127.0.0.1:6600", "address of the mpd server")
   flag.StringVar(&mpdPasswd, "passwd", "", "mpd password")
 }
@@ -41,7 +42,7 @@ func main() {
   log("Listening on:", addr)
 
   mux := http.NewServeMux()
-  mux.HandleFunc("/", serveIndex)
+  mux.HandleFunc("/", serveFile)
   mux.Handle("/ws", s.Handler())
 
   go chnLog(s.Log)
@@ -52,8 +53,8 @@ func main() {
   <-sig
 }
 
-func serveIndex(w http.ResponseWriter, r *http.Request) {
-  http.ServeFile(w, r, index)
+func serveFile(w http.ResponseWriter, r *http.Request) {
+  http.ServeFile(w, r, filepath.Join(root, r.URL.Path))
 }
 
 func listen(addr string) (net.Listener, error) {

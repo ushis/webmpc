@@ -19,7 +19,7 @@ To compile the server you need a [Go](http://golang.org/) compiler and a
 Get the dependencies.
 
 ```
-gem install coffee-script uglifier sass
+gem install sass
 ```
 
 Build the binaries.

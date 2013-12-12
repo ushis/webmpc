@@ -8,8 +8,5 @@ src/code.google.com
 
 # Binaries
 /webmpcd
-*.6
-/index.html
-/html/webmpc.js
 /html/webmpc.css
 /.sass-cache
