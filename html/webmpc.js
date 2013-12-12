@@ -567,11 +567,10 @@
     this.vol.value = state.volume;
     this.curId = window.parseInt(state.songid);
 
-    // TODO Favicon
     if (state.state === 'play') {
-      this.icon.href = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAN1wAADdcBQiibeAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAACmSURBVDiNxZOxDYQwDEXzTxcpc7BJCisNuzAClDAPVKFgClrmQCjSv+ZoUHQhpLhf28//2zJIqhK9irqvABEZRaR6DABQA1hFpLXWmmzAVwZAp7VenXP1E8CpiuSYipVc4hnLOdfFYt29giHZxmIVn/F9s24HMBzH0S/LsmcBSE5KqcZ7v+U62AA03vvp14AYYCfZhxCGq90k4LQ7z3PUbkz4+zd+AIcpQ2bPvtSaAAAAAElFTkSuQmCC'
+      this.icon.href = './play.png';
     } else {
-      this.icon.href = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAN1wAADdcBQiibeAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAACmSURBVDiNxZOxDYQwDEXzTxcpc7BJCisNuzAClDAPVKFgClrmQCjSv+ZoUHQhpLhf28//2zJIqhK9irqvABEZRaR6DABQA1hFpLXWmmzAVwZAp7VenXP1E8CpiuSYipVc4hnLOdfFYt29giHZxmIVn/F9s24HMBzH0S/LsmcBSE5KqcZ7v+U62AA03vvp14AYYCfZhxCGq90k4LQ7z3PUbkz4+zd+AIcpQ2bPvtSaAAAAAElFTkSuQmCC'
+      this.icon.href = './pause.png';
     }
 
     try {
