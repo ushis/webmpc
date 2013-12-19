@@ -522,7 +522,7 @@
     //
     this.el.querySelector('#pause').addEventListener('click', function() {
       if (that.el.dataset.state === 'stop') {
-        that.sock.send({Cmd: 'Play', Pos: '-1'});
+        that.sock.send({Cmd: 'Play', Pos: -1});
         return;
       }
       that.sock.send({Cmd: 'Pause', Pause: that.el.dataset.state === 'play'});
