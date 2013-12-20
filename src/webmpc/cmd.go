@@ -16,6 +16,7 @@ var commands = map[string]func(*Cmd, *mpd.Client) (*Result, error){
   "DeleteId":         delId,
   "GetFiles":         getFiles,
   "ListPlaylists":    listPlaylists,
+  "Move":             move,
   "MoveId":           moveId,
   "Next":             next,
   "Pause":            pause,
@@ -165,6 +166,12 @@ func listPlaylists(_ *Cmd, conn *mpd.Client) (r *Result, err error) {
     r = NewResult("StoredPlaylists", lists)
   }
   return
+}
+
+//
+func move(cmd *Cmd, conn *mpd.Client) (*Result, error) {
+  err := conn.Move(cmd.Start, cmd.End, cmd.Pos)
+  return nil, err
 }
 
 //

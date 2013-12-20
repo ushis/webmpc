@@ -327,6 +327,7 @@
   // Playlist
   var Playlist = function(selector, sock) {
     var that = this;
+    var clicked = null;
 
     this.el = document.querySelector(selector);
     this.wrap = this.el.querySelector('div.wrap');
@@ -349,7 +350,20 @@
     });
 
     //
+    this.el.addEventListener('click', function(e) {
+      clicked = e.target;
+
+      // Wait a momment, in case it is a double click.
+      window.setTimeout(function() {
+        if (clicked === e.target) {
+          that.handleClick(e.target);
+        }
+      }, 200);
+    });
+
+    //
     this.el.addEventListener('dblclick', function(e) {
+      clicked = null;
       that.handleDblClick(e.target);
     });
 
@@ -437,41 +451,143 @@
   };
 
   //
+  Playlist.prototype.unselect = function(trs) {
+    for (var i = 0, len = trs.length; i < len; i++) {
+      trs[i].classList.remove('selected');
+    }
+  };
+
+  //
+  Playlist.prototype.unselectAll = function() {
+    this.unselect(this.el.querySelectorAll('tr.selected'));
+  };
+
+  //
+  Playlist.prototype.select = function(start, end) {
+    var startIndex = window.parseInt(start.dataset.index);
+    var endIndex = window.parseInt(end.dataset.index);
+
+    if (startIndex > endIndex) {
+      var tmp = start;
+      start = end;
+      end = tmp;
+    }
+
+    for (var el = start; el !== end; el = el.nextSibling) {
+      el.classList.add('selected');
+    }
+    end.classList.add('selected');
+  };
+
+  //
+  Playlist.prototype.length = function() {
+    return this.el.querySelectorAll('tr').length;
+  };
+
+  //
+  Playlist.prototype.add = function(uris, pos) {
+    this.sock.send({Cmd: 'AddMulti', Uris: uris, Pos: pos});
+  };
+
+  //
+  Playlist.prototype.move = function(start, end, pos) {
+    // Calculate the new position, if the tracks are moved down the playlist.
+    if (start < pos) {
+      pos -= end - start;
+    }
+    this.sock.send({Cmd: 'Move', Start: start, End: end, Pos: pos});
+  };
+
+  //
+  Playlist.prototype.moveId = function(id, pos) {
+    var tr = this.el.querySelector('tr[data-id="' + id + '"]');
+
+    if (tr === null) {
+      console.debug('Playlist.moveId: invalid track id:', id);
+      return;
+    }
+    var index = window.parseInt(tr.dataset.index);
+
+    // Calculate the new position, if the track is moved down the playlist.
+    if (index < pos) {
+      pos -= 1;
+    }
+    this.sock.send({Cmd: 'MoveId', Id: id, Pos: pos});
+  };
+
+  //
+  Playlist.prototype.handleClick = function(el) {
+    if (el.nodeName !== 'TD') {
+      return;
+    }
+    el = el.parentNode;
+
+    // Remove selection if the clicked element is already selected.
+    if (el.classList.contains('selected')) {
+      this.unselectAll();
+      return;
+    }
+    var selected = this.el.querySelectorAll('tr.selected');
+
+    // Select everything between the already selected and the clicked element.
+    if (selected.length === 1) {
+      this.select(selected[0], el);
+      return;
+    }
+
+    // Select the clicked element.
+    this.unselect(selected);
+    el.classList.add('selected');
+  };
+
+  //
   Playlist.prototype.handleDblClick = function(el) {
     if (el.nodeName === 'TD') {
       var id = window.parseInt(el.parentNode.dataset.id);
       this.sock.send({Cmd: 'PlayId', Id: id});
     }
+    this.unselectAll();
   };
 
   //
   Playlist.prototype.handleDragStart = function(e) {
     var el = e.target;
 
-    if (el.nodeName === 'TR') {
-      var data = {type: 'id', data: window.parseInt(el.dataset.id)};
-      e.dataTransfer.setData('application/json', JSON.stringify(data));
+    if (el.nodeName !== 'TR') {
+      return;
     }
+    var data;
+
+    if (el.classList.contains('selected')) {
+      var els = this.el.querySelectorAll('tr.selected');
+      var start = window.parseInt(els[0].dataset.index);
+      var end = window.parseInt(els[els.length-1].dataset.index) + 1;
+      data = {type: 'indexes', data: {start: start, end: end}};
+    } else {
+      data = {type: 'id', data: window.parseInt(el.dataset.id)};
+    }
+    e.dataTransfer.setData('application/json', JSON.stringify(data));
   };
 
   //
   Playlist.prototype.handleDrop = function(e) {
+    var el = e.target;
     var data = JSON.parse(e.dataTransfer.getData('application/json'));
-    var pos = window.parseInt(e.target.parentNode.dataset.index || -1);
+    var pos = window.parseInt(el.parentNode.dataset.index || this.length());
 
-    if (data.type === 'uris') {
-      this.sock.send({Cmd: 'AddMulti', Uris: data.data, Pos: pos});
-      return;
+    switch (data.type) {
+    case 'uris':
+      this.add(data.data, pos);
+      break;
+    case 'indexes':
+      this.move(data.data.start, data.data.end, pos);
+      break;
+    case 'id':
+      this.moveId(data.data, pos);
+      break;
+    default:
+      console.debug('Playlist.handleDrop: unexpected data type:', data.type);
     }
-
-    if (data.type !== 'id') {
-      return;
-    }
-
-    if (pos < 0) {
-      pos = this.el.querySelectorAll('tr').length - 1;
-    }
-    this.sock.send({Cmd: 'MoveId', Id: data.data, Pos: pos});
   };
 
 
@@ -503,7 +619,7 @@
         that.sock.send({Cmd: 'Status'});
       }, 1000);
 
-      if (that.curId !== state.songid) {
+      if (that.curId !== window.parseInt(state.songid)) {
         that.sock.send({Cmd: 'CurrentSong'});
       }
       that.update(state);

@@ -341,13 +341,22 @@ input[type=range] {
     tr {
       cursor: default;
 
+      &:nth-child(2n) {
+        background-color: #383838;
+      }
+
       &.active {
         font-weight: bold;
         color: #f66;
       }
 
-      &:nth-child(2n) {
-        background-color: #383838;
+      &.selected {
+        font-weight: bold;
+        background-color: #444;
+
+        &:nth-child(2n) {
+          background-color: #484848;
+        }
       }
 
       &:hover {
