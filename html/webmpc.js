@@ -328,6 +328,7 @@
   var Playlist = function(selector, sock) {
     var that = this;
     var clicked = null;
+    var dragging = false;
 
     this.el = document.querySelector(selector);
     this.wrap = this.el.querySelector('div.wrap');
@@ -369,11 +370,13 @@
 
     //
     this.el.addEventListener('dragstart', function(e) {
+      dragging = true;
       that.handleDragStart(e);
     });
 
     //
     this.el.addEventListener('drop', function(e) {
+      dragging = false;
       that.handleDrop(e);
     });
 
@@ -381,6 +384,24 @@
     this.el.addEventListener('dragover', Util.stopEvent, false);
     this.el.addEventListener('dragenter', Util.stopEvent, false);
     this.el.addEventListener('dragleave', Util.stopEvent, false);
+
+    //
+    document.addEventListener('drop', function(e) {
+      dragging = false;
+      that.handleDropOut(e);
+    });
+
+    //
+    var dragOutHandler = function(e) {
+      if (dragging) {
+        Util.stopEvent(e);
+      }
+    };
+
+    //
+    document.addEventListener('dragover', dragOutHandler, false);
+    document.addEventListener('dragenter', dragOutHandler, false);
+    document.addEventListener('dragleave', dragOutHandler, false);
 
     //
     this.sock.send({Cmd: 'PlaylistInfo'});
@@ -516,6 +537,16 @@
   };
 
   //
+  Playlist.prototype.del = function(start, end) {
+    this.sock.send({Cmd: 'Delete', Start: start, End: end});
+  };
+
+  //
+  Playlist.prototype.delId = function(id) {
+    this.sock.send({Cmd: 'DeleteId', Id: id});
+  };
+
+  //
   Playlist.prototype.handleClick = function(el) {
     if (el.nodeName !== 'TD') {
       return;
@@ -588,6 +619,24 @@
     default:
       console.debug('Playlist.handleDrop: unexpected data type:', data.type);
     }
+    Util.stopEvent(e);
+  };
+
+  //
+  Playlist.prototype.handleDropOut = function(e) {
+    var data = JSON.parse(e.dataTransfer.getData('application/json'));
+
+    switch(data.type) {
+    case 'indexes':
+      this.del(data.data.start, data.data.end);
+      break;
+    case 'id':
+      this.delId(data.data);
+      break;
+    default:
+      console.debug('Playlist.handleDropOut: unexpected data type:', data.type);
+    }
+    Util.stopEvent(e);
   };
 
 
