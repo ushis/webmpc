@@ -2,6 +2,7 @@ package webmpc
 
 import (
   "code.google.com/p/go.net/websocket"
+  "encoding/json"
   "net/http"
 )
 
@@ -66,8 +67,16 @@ func (s *Server) handleConnection(ws *websocket.Conn) {
 
 // Broadcasts a mpd result.
 func (s *Server) broadcast(r *Result) {
+  msg, err := json.Marshal(r)
+  r.Free()
+
+  if err != nil {
+    s.Log <- err
+    return
+  }
+
   for conn, _ := range s.conns {
-    conn.result <- r
+    conn.msg <- msg
   }
 }
 
@@ -75,7 +84,7 @@ func (s *Server) broadcast(r *Result) {
 func (s *Server) dropConn(conn *Conn) {
   if s.conns[conn] {
     delete(s.conns, conn)
-    close(conn.result)
+    close(conn.msg)
   }
 }
 

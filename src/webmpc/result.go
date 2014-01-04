@@ -5,9 +5,29 @@ type Result struct {
   Data interface{} // The data
 }
 
+var resultPool = make(chan *Result, 100)
+
 // Returns a fresh result.
-func NewResult(t string, data interface{}) *Result {
-  return &Result{t, data}
+func NewResult(t string, data interface{}) (r *Result) {
+  select {
+  case r = <-resultPool:
+    // Got one from the pool.
+  default:
+    r = new(Result)
+  }
+  r.Type = t
+  r.Data = data
+  return
+}
+
+//
+func (r *Result) Free() {
+  select {
+  case resultPool <- r:
+    // Stored it in the pool.
+  default:
+    // Pool is full. It's a job for the GC.
+  }
 }
 
 type StoredPlaylist struct {

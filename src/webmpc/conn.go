@@ -6,16 +6,16 @@ import (
 )
 
 type Conn struct {
-  ws     *websocket.Conn    // The websocket connection.
-  cmd    chan<- *Cmd        // Command channel to the server.
-  die    chan<- *Conn       // Drop channel to notify the server about a drop.
-  log    chan<- interface{} // Log channel.
-  result chan *Result       // Result channel from the server.
+  ws  *websocket.Conn    // The websocket connection.
+  cmd chan<- *Cmd        // Command channel to the server.
+  die chan<- *Conn       // Drop channel to notify the server about a drop.
+  log chan<- interface{} // Log channel.
+  msg chan []byte        // Result channel from the server.
 }
 
 // Returns a fresh connection.
 func NewConn(ws *websocket.Conn, cmd chan<- *Cmd, die chan<- *Conn, log chan<- interface{}) *Conn {
-  return &Conn{ws, cmd, die, log, make(chan *Result, 100)}
+  return &Conn{ws, cmd, die, log, make(chan []byte, 100)}
 }
 
 // Starts the send/receive loops.
@@ -27,8 +27,8 @@ func (c *Conn) Run() {
 
   go c.receive()
 
-  for r := range c.result {
-    switch err := websocket.JSON.Send(c.ws, r); {
+  for msg := range c.msg {
+    switch _, err := c.ws.Write(msg); {
     case err == nil:
       // Do nothing.
     case err == io.EOF:
