@@ -333,7 +333,7 @@
     this.el = document.querySelector(selector);
     this.wrap = this.el.querySelector('div.wrap');
     this.sock = sock;
-    this.curIndex = -1;
+    this.curId = -1;
 
     //
     this.sock.register('Playlist', function(tracks) {
@@ -342,7 +342,7 @@
 
     //
     this.sock.register('Status', function(state) {
-      that.updateCurrent(window.parseInt(state.song));
+      that.updateCurrent(window.parseInt(state.songid));
     });
 
     //
@@ -419,7 +419,7 @@
       tr.dataset.name = track.file;
       tr.dataset.index = i;
 
-      if (i === this.curIndex) {
+      if (window.parseInt(track.Id) === this.curId) {
         tr.classList.add('active');
       }
       var title = Util.mk('td');
@@ -453,14 +453,14 @@
   };
 
   //
-  Playlist.prototype.updateCurrent = function(i) {
-    if (this.curIndex === i) {
+  Playlist.prototype.updateCurrent = function(id) {
+    if (this.curId === id) {
       return;
     }
-    this.curIndex = i;
-    var row = this.el.querySelectorAll('tr')[i];
+    this.curId = id;
+    var row = this.el.querySelector('tr[data-id="' + id + '"]');
 
-    if (row === undefined) {
+    if (row === null) {
       return;
     }
     var active = this.el.querySelectorAll('tr.active');
