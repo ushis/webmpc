@@ -457,18 +457,19 @@
     if (this.curId === id) {
       return;
     }
-    this.curId = id;
-    var row = this.el.querySelector('tr[data-id="' + id + '"]');
-
-    if (row === null) {
-      return;
-    }
     var active = this.el.querySelectorAll('tr.active');
 
     for (var i = 0, len = active.length; i < len; i++) {
       active[i].classList.remove('active');
     }
+    var row = this.el.querySelector('tr[data-id="' + id + '"]');
+
+    if (row === null) {
+      console.debug('Playlist.updateCurrent: invalid track id:', id);
+      return;
+    }
     row.classList.add('active');
+    this.curId = id;
   };
 
   //
