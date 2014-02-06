@@ -119,9 +119,9 @@
     var loc = window.location;
 
     if (loc.protocol === 'https://') {
-      this.addr = 'wss://' + loc.host + '/ws';
+      this.addr = 'wss://' + loc.host + loc.pathname + 'ws';
     } else {
-      this.addr = 'ws://' + loc.host + '/ws';
+      this.addr = 'ws://' + loc.host + loc.pathname + '/ws';
     }
 
     // Open the connection.
