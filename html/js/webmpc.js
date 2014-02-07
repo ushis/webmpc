@@ -223,6 +223,11 @@
       that.handleDragStart(e);
     });
 
+    // Save active directories.
+    window.addEventListener('unload', function() {
+      that.save();
+    });
+
     // Get a fresh
     this.sock.send({Cmd: 'GetFiles'});
   };
@@ -293,17 +298,9 @@
 
   //
   Db.prototype.handleClick = function(el) {
-    if (el.nodeName !== 'SPAN' || el.parentNode.dataset.type !== 'dir') {
-      return;
+    if (el.nodeName === 'SPAN' && el.parentNode.dataset.type === 'dir') {
+      el.parentNode.classList.toggle('active');
     }
-    el.parentNode.classList.toggle('active');
-    var lis = this.el.querySelectorAll('li.active');
-    var active = {};
-
-    for (var i = 0, len = lis.length; i < len; i++) {
-      active[lis[i].dataset.name] = true;
-    }
-    Store.set('db.active', active);
   };
 
   //
@@ -321,6 +318,17 @@
       var data = {type: 'uris', data: this.getUris(el.parentNode)};
       e.dataTransfer.setData('application/json', JSON.stringify(data));
     }
+  };
+
+  //
+  Db.prototype.save = function() {
+    var lis = this.el.querySelectorAll('li.active');
+    var active = {};
+
+    for (var i = 0, len = lis.length; i < len; i++) {
+      active[lis[i].dataset.name] = true;
+    }
+    Store.set('db.active', active);
   };
 
 
