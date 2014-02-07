@@ -115,14 +115,18 @@
       Status: []
     };
 
-    // Get websocket adr from window.location.
-    var loc = window.location;
-
-    if (loc.protocol === 'https:') {
-      this.addr = 'wss://' + loc.host + loc.pathname + '/ws';
+    // Get websocket address from window.location
+    if (window.location.protocol === 'https:') {
+      this.addr = 'wss://';
     } else {
-      this.addr = 'ws://' + loc.host + loc.pathname + '/ws';
+      this.addr = 'ws://';
     }
+    this.addr += window.location.host + window.location.pathname;
+
+    if (this.addr[this.addr.length-1] !== '/') {
+      this.addr += '/';
+    }
+    this.addr += 'ws';
 
     // Open the connection.
     this.open();
