@@ -2,10 +2,10 @@ export GOPATH := $(shell pwd)
 
 .PHONY: all
 
-all: webmpcd html/webmpc.css
+all: webmpcd html/css/webmpc.css
 
-html/webmpc.css: html/webmpc.scss
-	scss -t compressed $^ $@
+html/css/webmpc.css: html/css/webmpc.scss
+	scss -I html/css -t compressed $^ $@
 
 webmpcd: deps
 	go build -v $@
@@ -14,7 +14,7 @@ deps:
 	go get -d -v webmpc/...
 
 clean:
-	rm -f webmpcd html/webmpc.css
+	rm -f webmpcd html/css/webmpc.css
 
 fmt:
 	gofmt -l -w -tabs=false -tabwidth=2 src/webmpc{,d}

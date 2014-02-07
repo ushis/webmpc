@@ -351,6 +351,11 @@
     });
 
     //
+    this.el.querySelector('span.shuffle').addEventListener('click', function() {
+      that.sock.send({Cmd: 'Shuffle', Start: -1, End: -1});
+    });
+
+    //
     this.el.addEventListener('click', function(e) {
       clicked = e.target;
 
@@ -650,7 +655,7 @@
     this.vol = this.el.querySelector('#volume');
     this.prog = this.el.querySelector('#progress');
     this.progVal = this.el.querySelector('#progress-val');
-    this.progRem = this.el.querySelector('#progress-remain');
+    this.progTot = this.el.querySelector('#progress-tot');
     this.curTrack = this.el.querySelector('#current-track');
     this.icon = Util.mk('link', {rel: 'icon', type: 'image/png'});
     this.curId = -1;
@@ -686,7 +691,7 @@
     });
 
     //
-    this.el.querySelector('#pause').addEventListener('click', function() {
+    this.el.querySelector('#play').addEventListener('click', function() {
       if (that.el.dataset.state === 'stop') {
         that.sock.send({Cmd: 'Play', Pos: -1});
         return;
@@ -734,9 +739,9 @@
     this.curId = window.parseInt(state.songid);
 
     if (state.state === 'play') {
-      this.icon.href = './play.png';
+      this.icon.href = './img/play.png';
     } else {
-      this.icon.href = './pause.png';
+      this.icon.href = './img/pause.png';
     }
 
     try {
@@ -757,9 +762,7 @@
     this.prog.value = cur;
     this.prog.max = max;
     this.progVal.textContent = Util.humanDuration(cur);
-
-    var rem = (max > cur) ? (max - cur) : 0;
-    this.progRem.textContent = '-' + Util.humanDuration(rem);
+    this.progTot.textContent = Util.humanDuration(max);
   };
 
   //
@@ -782,8 +785,10 @@
 
 
   // GO!
-  var sock = new Socket();
-  var db = new Db('#db', sock);
-  var pl = new Playlist('#playlist', sock);
-  var player = new Player('#player', sock);
+  window.addEventListener('load', function() {
+    var sock = new Socket();
+    var db = new Db('#db', sock);
+    var pl = new Playlist('#pl', sock);
+    var player = new Player('#player', sock);
+  });
 }).call(this);
