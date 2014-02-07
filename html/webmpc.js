@@ -119,7 +119,7 @@
     var loc = window.location;
 
     if (loc.protocol === 'https:') {
-      this.addr = 'wss://' + loc.host + loc.pathname + 'ws';
+      this.addr = 'wss://' + loc.host + loc.pathname + '/ws';
     } else {
       this.addr = 'ws://' + loc.host + loc.pathname + '/ws';
     }
