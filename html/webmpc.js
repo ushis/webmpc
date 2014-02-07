@@ -136,7 +136,7 @@
 
     // Process queue, when connection is ready.
     this.sock.addEventListener('open', function() {
-      while (that.queue.length > 0) {
+      while (that.queue.length > 0 && that.sock.readyState === WebSocket.OPEN) {
         that.send(that.queue.shift());
       }
     });
