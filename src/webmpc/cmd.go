@@ -39,6 +39,7 @@ var commands = map[string]func(*Cmd, *mpd.Client) (*Result, error){
   "SeekId":           seekId,
   "SetPlaylist":      setPlaylist,
   "SetVolume":        setVolume,
+  "Shuffle":          shuffle,
   "Status":           status,
   "Stop":             stop,
   "Update":           update,
@@ -96,8 +97,7 @@ func (c *Cmd) Exec(conn *mpd.Client) (*Result, error) {
 
 //
 func add(cmd *Cmd, conn *mpd.Client) (*Result, error) {
-  err := conn.Add(cmd.Uri)
-  return nil, err
+  return nil, conn.Add(cmd.Uri)
 }
 
 //
@@ -122,8 +122,7 @@ func addMulti(cmd *Cmd, conn *mpd.Client) (*Result, error) {
 
 //
 func clear(cmd *Cmd, conn *mpd.Client) (*Result, error) {
-  err := conn.Clear()
-  return nil, err
+  return nil, conn.Clear()
 }
 
 //
@@ -138,14 +137,12 @@ func currentSong(_ *Cmd, conn *mpd.Client) (r *Result, err error) {
 
 //
 func del(cmd *Cmd, conn *mpd.Client) (*Result, error) {
-  err := conn.Delete(cmd.Start, cmd.End)
-  return nil, err
+  return nil, conn.Delete(cmd.Start, cmd.End)
 }
 
 //
 func delId(cmd *Cmd, conn *mpd.Client) (*Result, error) {
-  err := conn.DeleteId(cmd.Id)
-  return nil, err
+  return nil, conn.DeleteId(cmd.Id)
 }
 
 //
@@ -170,38 +167,32 @@ func listPlaylists(_ *Cmd, conn *mpd.Client) (r *Result, err error) {
 
 //
 func move(cmd *Cmd, conn *mpd.Client) (*Result, error) {
-  err := conn.Move(cmd.Start, cmd.End, cmd.Pos)
-  return nil, err
+  return nil, conn.Move(cmd.Start, cmd.End, cmd.Pos)
 }
 
 //
 func moveId(cmd *Cmd, conn *mpd.Client) (*Result, error) {
-  err := conn.MoveId(cmd.Id, cmd.Pos)
-  return nil, err
+  return nil, conn.MoveId(cmd.Id, cmd.Pos)
 }
 
 //
 func next(cmd *Cmd, conn *mpd.Client) (*Result, error) {
-  err := conn.Next()
-  return nil, err
+  return nil, conn.Next()
 }
 
 //
 func pause(cmd *Cmd, conn *mpd.Client) (*Result, error) {
-  err := conn.Pause(cmd.Pause)
-  return nil, err
+  return nil, conn.Pause(cmd.Pause)
 }
 
 //
 func play(cmd *Cmd, conn *mpd.Client) (*Result, error) {
-  err := conn.Play(cmd.Pos)
-  return nil, err
+  return nil, conn.Play(cmd.Pos)
 }
 
 //
 func playId(cmd *Cmd, conn *mpd.Client) (*Result, error) {
-  err := conn.PlayId(cmd.Id)
-  return nil, err
+  return nil, conn.PlayId(cmd.Id)
 }
 
 //
@@ -250,8 +241,7 @@ func playlistInfo(_ *Cmd, conn *mpd.Client) (r *Result, err error) {
 
 //
 func playlistLoad(cmd *Cmd, conn *mpd.Client) (*Result, error) {
-  err := conn.PlaylistLoad(cmd.Playlist, cmd.Start, cmd.End)
-  return nil, err
+  return nil, conn.PlaylistLoad(cmd.Playlist, cmd.Start, cmd.End)
 }
 
 //
@@ -264,50 +254,42 @@ func playlistMove(cmd *Cmd, conn *mpd.Client) (*Result, error) {
 
 //
 func playlistRemove(cmd *Cmd, conn *mpd.Client) (*Result, error) {
-  err := conn.PlaylistRemove(cmd.Playlist)
-  return nil, err
+  return nil, conn.PlaylistRemove(cmd.Playlist)
 }
 
 //
 func playlistRename(cmd *Cmd, conn *mpd.Client) (*Result, error) {
-  err := conn.PlaylistRename(cmd.Playlist, cmd.Name)
-  return nil, err
+  return nil, conn.PlaylistRename(cmd.Playlist, cmd.Name)
 }
 
 //
 func playlistSave(cmd *Cmd, conn *mpd.Client) (*Result, error) {
-  err := conn.PlaylistSave(cmd.Playlist)
-  return nil, err
+  return nil, conn.PlaylistSave(cmd.Playlist)
 }
 
 //
 func previous(cmd *Cmd, conn *mpd.Client) (*Result, error) {
-  err := conn.Previous()
-  return nil, err
+  return nil, conn.Previous()
 }
 
 //
 func random(cmd *Cmd, conn *mpd.Client) (*Result, error) {
-  err := conn.Random(cmd.Random)
-  return nil, err
+  return nil, conn.Random(cmd.Random)
 }
 
 //
 func repeat(cmd *Cmd, conn *mpd.Client) (*Result, error) {
-  err := conn.Repeat(cmd.Repeat)
-  return nil, err
+  return nil, conn.Repeat(cmd.Repeat)
 }
 
 //
 func seek(cmd *Cmd, conn *mpd.Client) (*Result, error) {
-  err := conn.Seek(cmd.Pos, cmd.Time)
-  return nil, err
+  return nil, conn.Seek(cmd.Pos, cmd.Time)
 }
 
 //
 func seekId(cmd *Cmd, conn *mpd.Client) (*Result, error) {
-  err := conn.SeekId(cmd.Id, cmd.Time)
-  return nil, err
+  return nil, conn.SeekId(cmd.Id, cmd.Time)
 }
 
 //
@@ -325,8 +307,12 @@ func setPlaylist(cmd *Cmd, conn *mpd.Client) (*Result, error) {
 
 //
 func setVolume(cmd *Cmd, conn *mpd.Client) (*Result, error) {
-  err := conn.SetVolume(cmd.Volume)
-  return nil, err
+  return nil, conn.SetVolume(cmd.Volume)
+}
+
+//
+func shuffle(cmd *Cmd, conn *mpd.Client) (*Result, error) {
+  return nil, conn.Shuffle(cmd.Start, cmd.End)
 }
 
 //
@@ -341,8 +327,7 @@ func status(cmd *Cmd, conn *mpd.Client) (r *Result, err error) {
 
 //
 func stop(cmd *Cmd, conn *mpd.Client) (*Result, error) {
-  err := conn.Stop()
-  return nil, err
+  return nil, conn.Stop()
 }
 
 //

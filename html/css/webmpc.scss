@@ -1,0 +1,418 @@
+// Import Ionicons
+@import 'ionicons';
+
+// Prefix mixin.
+@mixin prefix($property, $value) {
+  @each $p in webkit moz ms o {
+    -#{$p}-#{$property}: $value;
+  }
+  #{$property}: $value;
+}
+
+// General
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font: normal normal normal 13px/160% sans-serif;
+  color: #e0e0e0;
+  background-color: #333;
+}
+
+h2 {
+  padding: 0px 4px;
+  font-size: 13px;
+  line-height: 24px;
+  font-weight: normal;
+  color: #f9f9f9;
+  border-bottom: 1px solid #555;
+}
+
+ul {
+  list-style-type: none;
+}
+
+// Webkit and Firefox sliders
+input[type=range] {
+  -webkit-appearance: none;
+  background-color: #555;
+  height: 10px;
+  width: 100%;
+  outline: none;
+  cursor: pointer;
+
+  &::-moz-range-track {
+    -moz-appearance: none;
+    background-color: #555;
+    height: 4px;
+    border:  0 none transparent;
+    outline: none;
+  }
+
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    position: relative;
+    width: 10px;
+    height: 10px;
+    background-color: #fff;
+    border-left: 1px solid #ddd;
+    cursor: move;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 10px;
+      width: 9999px;
+      height: 10px;
+      background-color: #fff;
+      pointer-events: none;
+    }
+  }
+
+  &::-moz-range-thumb {
+    -moz-appearance: none;
+    position: relative;
+    width: 10px;
+    height: 10px;
+    background-color: #fff;
+    border:  0 none transparent;
+    border-left: 1px solid #ddd;
+    border-radius: 0;
+    cursor: move;
+  }
+}
+
+// Scrollbars
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #555;
+}
+
+// Player
+#player {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 60px;
+  color: #f9f9f9;
+  border-bottom: 1px solid #555;
+
+  // Progress
+  #prog {
+    position: absolute;
+    top: -6px;
+    left: 0;
+    right: 0;
+    line-height: 10px;
+
+    &:hover {
+      top: 0;
+    }
+  }
+
+  // Control
+  #ctrl {
+    position: absolute;
+    bottom: 17px;
+    left: 12px;
+    right: 12px;
+    height: 20px;
+    font-size: 18px;
+
+    #btns {
+      float: left;
+      margin-right: 48px;
+
+      > div {
+        float: left;
+        line-height: 20px;
+
+        &.btn {
+          cursor: pointer;
+        }
+
+        &:first-child {
+          margin-left: 0;
+        }
+      }
+    }
+  }
+
+  // Play Button
+  #play {
+    width: 0;
+    height: 0;
+    margin: 0 -5px 0 21px;
+    border: 10px solid transparent;
+    border-left-color: #f9f9f9;
+  }
+
+  &[data-state="play"] #play {
+    width: 4px;
+    height: 20px;
+    margin: 0 0 0 16px;
+    border: 0 none transparent;
+    border-left: 8px solid #f9f9f9;
+    border-right: 8px solid #f9f9f9;
+  }
+
+  // Prev & Next Buttons
+  #prev, #next {
+    position: relative;
+    width: 0;
+    height: 0;
+    margin-left: 16px;
+    border: 10px solid transparent;
+
+    &:before {
+      position: absolute;
+      content: ' ';
+      top: -10px;
+      width: 0;
+      height: 0;
+      border: 10px solid transparent;
+    }
+  }
+
+  #prev, #prev:before {
+    right: 0;
+    border-right-color: #f9f9f9;
+  }
+
+  #next, #next:before {
+    left: 0;
+    border-left-color: #f9f9f9;
+  }
+
+  // Repeat & Random Buttons
+  #repeat, #random {
+    margin-left: 16px;
+    color: #aaa;
+  }
+
+  #repeat {
+    margin-left: 48px;
+  }
+
+  &[data-random="1"] #random,
+  &[data-repeat="1"] #repeat {
+    color: #fff;
+  }
+
+  // Progress numbers
+  #progress-val, #progress-tot {
+    font-size: 12px;
+  }
+
+  #progress-val {
+    margin-left: 48px;
+
+    &:after {
+      content: '/';
+      margin: 0 6px;
+    }
+  }
+
+  // Volume
+  #vol {
+    float: right;
+    width: 12.5%;
+    min-width: 100px;
+    max-width: 200px;
+    margin-left: 48px;
+    overflow: hidden;
+
+    #volume {
+      height: 4px;
+      vertical-align: middle;
+
+      &::-webkit-slider-thumb,
+      &::-webkit-slider-thumb:before {
+        height: 4px;
+      }
+
+      &::-moz-range-thumb {
+        height: 4px;
+      }
+    }
+  }
+
+  // Current Track
+  #current-track {
+    min-height: 20px;
+    font-size: 12px;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    span:nth-child(n+2):before {
+      content: '-';
+      margin: 0 6px;
+    }
+  }
+}
+
+// Database & Playlist
+#main {
+  position: fixed;
+  top: 60px;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+#db div.wrap, #pl div.wrap {
+  position: absolute;
+  top: 25px;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow: auto;
+}
+
+#db h2 span, #pl h2 span {
+  float: right;
+  margin: 0 4px 0 8px;
+  font-size: 12px;
+  line-height: 25px;
+  cursor: pointer;
+}
+
+// Database
+#db {
+  position: absolute;
+  top: 0;
+  right: 50%;
+  bottom: 0;
+  left: 0;
+  border-right: 1px solid #555;
+
+  ul {
+    font-size: 12px;
+    list-style-type: none;
+
+    li {
+      span {
+        display: block;
+        padding: 2px 6px;
+        &:hover {
+          color: #111;
+          background-color: #f66;
+        }
+      }
+
+      span:before {
+        display: inline-block;
+        width: 12px;
+        font-family: 'Ionicons';
+      }
+
+      &[data-type="dir"] > span:before {
+        content: '\f10a';
+      }
+
+      &[data-type="dir"].active > span:before {
+        content: '\f104';
+      }
+
+      &[data-type="file"] > span:before {
+        content: '\f20c';
+        width: 16px;
+      }
+
+      ul {
+        display: none;
+        padding-left: 16px;
+      }
+
+      &.active > ul {
+        display: block;
+      }
+    }
+  }
+}
+
+// Playlist
+#pl {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 50%;
+
+  div.wrap {
+    padding-bottom: 25px;
+  }
+
+  h2 span.clear {
+    font-size: 10px;
+  }
+
+  table {
+    width: 100%;
+    font-size: 12px;
+    border-spacing: 0;
+
+
+    tr {
+      cursor: default;
+
+
+      &:nth-child(2n) {
+        background-color: #383838;
+      }
+
+      &.active {
+        font-weight: bold;
+        color: #f66;
+      }
+
+      &.selected {
+        background-color: #535353;
+
+
+        &:nth-child(2n) {
+          background-color: #585858;
+        }
+      }
+
+      &:hover, &:nth-child(2n):hover {
+        color: #111;
+        background-color: #f66;
+      }
+
+      td {
+        display: inline-block;
+        width: 25%;
+        padding: 2px 6px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+
+        &:first-child {
+          width: 40%;
+        }
+
+        &:last-child {
+          text-align: right;
+          width: 10%;
+        }
+
+        &:empty:before {
+          content: '-';
+        }
+      }
+    }
+  }
+}

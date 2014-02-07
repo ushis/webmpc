@@ -3,50 +3,48 @@
   <head>
     <meta charset="utf-8">
     <title>WebMPC</title>
-    <link rel="stylesheet" href="./webmpc.css">
+    <link rel="stylesheet" href="./css/webmpc.css">
+    <script src="./js/webmpc.js"></script>
   </head>
   <body>
     <div id="player">
+      <div id="prog">
+        <input id="progress" type="range" min="0" value="0" step="0.01">
+      </div>
+
       <div id="ctrl">
-        <div class="wrap">
-          <div id="prev" title="Previous"></div>
-          <div id="pause" title="Play / Pause"></div>
-          <div id="next" title="Next"></div>
-          <div id="repeat" title="Repeat"></div>
-          <div id="random" title="Random"></div>
+        <div id="btns">
+          <div id="prev" class="btn" title="Previous"></div>
+          <div id="play" class="btn" title="Play / Pause"></div>
+          <div id="next" class="btn" title="Next"></div>
+          <div id="repeat" class="btn ion-loop" title="Repeat"></div>
+          <div id="random" class="btn ion-shuffle" title="Random"></div>
+          <div id="progress-val">0:00</div>
+          <div id="progress-tot">0:00</div>
         </div>
-      </div>
 
-      <div id="status">
+        <div id="vol">
+          <input id="volume" type="range" min="0" max="100" step="0.1">
+        </div>
+
         <div id="current-track"></div>
-
-        <div class="prog">
-          <span id="progress-val"></span>
-          <input id="progress" type="range" min="0" value="0">
-          <span id="progress-remain"></span>
-        </div>
-      </div>
-
-      <div id="vol">
-        <input id="volume" type="range" min="0" max="100" value="100">
       </div>
     </div>
 
-    <div id="db">
-      <div class="head">
-        <span>Database</span>
+    <div id="main">
+      <div id="db">
+        <h2>Database</h2>
+        <div class="wrap"></div>
       </div>
-      <div class="wrap"></div>
-    </div>
 
-    <div id="playlist">
-      <div class="head">
-        <span>Playlist</span>
-        <span class="clear" title="Clear"></span>
+      <div id="pl">
+        <h2>
+          Playlist
+          <span class="clear ion-close-round" title="Clear"></span>
+          <span class="shuffle ion-shuffle" title="Shuffle"></span>
+        </h2>
+        <div class="wrap"></div>
       </div>
-      <div class="wrap"></div>
     </div>
-
-    <script src="./webmpc.js"></script>
   </body>
 </html>

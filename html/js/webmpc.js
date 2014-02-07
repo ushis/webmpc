@@ -136,7 +136,7 @@
 
     // Process queue, when connection is ready.
     this.sock.addEventListener('open', function() {
-      while (that.queue.length > 0) {
+      while (that.queue.length > 0 && that.sock.readyState === WebSocket.OPEN) {
         that.send(that.queue.shift());
       }
     });
@@ -223,6 +223,11 @@
       that.handleDragStart(e);
     });
 
+    // Save active directories.
+    window.addEventListener('unload', function() {
+      that.save();
+    });
+
     // Get a fresh
     this.sock.send({Cmd: 'GetFiles'});
   };
@@ -293,17 +298,9 @@
 
   //
   Db.prototype.handleClick = function(el) {
-    if (el.nodeName !== 'SPAN' || el.parentNode.dataset.type !== 'dir') {
-      return;
+    if (el.nodeName === 'SPAN' && el.parentNode.dataset.type === 'dir') {
+      el.parentNode.classList.toggle('active');
     }
-    el.parentNode.classList.toggle('active');
-    var lis = this.el.querySelectorAll('li.active');
-    var active = {};
-
-    for (var i = 0, len = lis.length; i < len; i++) {
-      active[lis[i].dataset.name] = true;
-    }
-    Store.set('db.active', active);
   };
 
   //
@@ -321,6 +318,17 @@
       var data = {type: 'uris', data: this.getUris(el.parentNode)};
       e.dataTransfer.setData('application/json', JSON.stringify(data));
     }
+  };
+
+  //
+  Db.prototype.save = function() {
+    var lis = this.el.querySelectorAll('li.active');
+    var active = {};
+
+    for (var i = 0, len = lis.length; i < len; i++) {
+      active[lis[i].dataset.name] = true;
+    }
+    Store.set('db.active', active);
   };
 
 
@@ -348,6 +356,11 @@
     //
     this.el.querySelector('span.clear').addEventListener('click', function() {
       that.sock.send({Cmd: 'Clear'});
+    });
+
+    //
+    this.el.querySelector('span.shuffle').addEventListener('click', function() {
+      that.sock.send({Cmd: 'Shuffle', Start: -1, End: -1});
     });
 
     //
@@ -650,7 +663,7 @@
     this.vol = this.el.querySelector('#volume');
     this.prog = this.el.querySelector('#progress');
     this.progVal = this.el.querySelector('#progress-val');
-    this.progRem = this.el.querySelector('#progress-remain');
+    this.progTot = this.el.querySelector('#progress-tot');
     this.curTrack = this.el.querySelector('#current-track');
     this.icon = Util.mk('link', {rel: 'icon', type: 'image/png'});
     this.curId = -1;
@@ -686,7 +699,7 @@
     });
 
     //
-    this.el.querySelector('#pause').addEventListener('click', function() {
+    this.el.querySelector('#play').addEventListener('click', function() {
       if (that.el.dataset.state === 'stop') {
         that.sock.send({Cmd: 'Play', Pos: -1});
         return;
@@ -734,9 +747,9 @@
     this.curId = window.parseInt(state.songid);
 
     if (state.state === 'play') {
-      this.icon.href = './play.png';
+      this.icon.href = './img/play.png';
     } else {
-      this.icon.href = './pause.png';
+      this.icon.href = './img/pause.png';
     }
 
     try {
@@ -757,9 +770,7 @@
     this.prog.value = cur;
     this.prog.max = max;
     this.progVal.textContent = Util.humanDuration(cur);
-
-    var rem = (max > cur) ? (max - cur) : 0;
-    this.progRem.textContent = '-' + Util.humanDuration(rem);
+    this.progTot.textContent = Util.humanDuration(max);
   };
 
   //
@@ -782,8 +793,10 @@
 
 
   // GO!
-  var sock = new Socket();
-  var db = new Db('#db', sock);
-  var pl = new Playlist('#playlist', sock);
-  var player = new Player('#player', sock);
+  window.addEventListener('load', function() {
+    var sock = new Socket();
+    var db = new Db('#db', sock);
+    var pl = new Playlist('#pl', sock);
+    var player = new Player('#player', sock);
+  });
 }).call(this);
